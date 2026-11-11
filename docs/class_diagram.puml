@@ -1,0 +1,141 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+' ===== Domain =====
+class Client {
+  +id
+  +full_name
+  +address
+  +phone
+}
+
+class Car {
+  +id
+  +brand
+  +model
+  +type
+  +year
+  +price_per_day
+  +deposit
+  +status
+}
+
+class Rental {
+  +id
+  +issue_date
+  +expected_return_date
+  +actual_return_date
+  +deposit_amount
+  +total_cost
+}
+
+class Fine {
+  +id
+  +reason
+  +amount
+}
+
+Client "1" -- "0..*" Rental
+Car "1" -- "0..*" Rental
+Rental "1" -- "0..*" Fine
+
+' ===== Strategy (blue) =====
+interface PricingStrategy #LightBlue {
+  +calculate(car, days)
+}
+class DailyTariff #LightBlue
+class WeeklyTariff #LightBlue
+class MonthlyTariff #LightBlue
+PricingStrategy <|.. DailyTariff
+PricingStrategy <|.. WeeklyTariff
+PricingStrategy <|.. MonthlyTariff
+
+' ===== Decorator (orange) =====
+interface PriceComponent #Orange {
+  +cost()
+}
+class BasePrice #Orange
+abstract class PriceDecorator #Orange {
+  #wrapped
+}
+class YearCoefficientDecorator #Orange
+class ExtraOptionsDecorator #Orange
+PriceComponent <|.. BasePrice
+PriceComponent <|.. PriceDecorator
+PriceDecorator <|-- YearCoefficientDecorator
+PriceDecorator <|-- ExtraOptionsDecorator
+PriceDecorator o-- PriceComponent
+BasePrice --> PricingStrategy
+
+' ===== State (green) =====
+interface RentalState #LightGreen {
+  +issue()
+  +return_car()
+  +cancel()
+}
+class ReservedState #LightGreen
+class ActiveState #LightGreen
+class OverdueState #LightGreen
+class ClosedState #LightGreen
+RentalState <|.. ReservedState
+RentalState <|.. ActiveState
+RentalState <|.. OverdueState
+RentalState <|.. ClosedState
+Rental o-- RentalState
+
+' ===== Factory Method (wheat) =====
+abstract class CarFactory #Wheat {
+  +create(data)
+}
+class EconomyCarFactory #Wheat
+class SuvCarFactory #Wheat
+class PremiumCarFactory #Wheat
+CarFactory <|-- EconomyCarFactory
+CarFactory <|-- SuvCarFactory
+CarFactory <|-- PremiumCarFactory
+CarFactory ..> Car : creates
+
+' ===== Chain of Responsibility (pink) =====
+abstract class ReturnCheckHandler #Pink {
+  #next
+  +handle(rental)
+}
+class OverdueCheck #Pink
+class DamageCheck #Pink
+class CleanlinessCheck #Pink
+class FuelCheck #Pink
+ReturnCheckHandler <|-- OverdueCheck
+ReturnCheckHandler <|-- DamageCheck
+ReturnCheckHandler <|-- CleanlinessCheck
+ReturnCheckHandler <|-- FuelCheck
+ReturnCheckHandler o-- ReturnCheckHandler : next
+ReturnCheckHandler ..> Fine : creates
+
+' ===== Template Method (yellow) =====
+abstract class BaseReport #Yellow {
+  +generate()
+  #fetch_data()
+  #aggregate()
+  #format()
+}
+class AvailabilityReport #Yellow
+class FinancialReport #Yellow
+BaseReport <|-- AvailabilityReport
+BaseReport <|-- FinancialReport
+
+' ===== Services =====
+class RentalService {
+  +create_rental()
+  +close_rental()
+}
+class ReportService {
+  +build(report_type)
+}
+class RentalRepository
+
+RentalService --> RentalRepository
+RentalService --> PriceComponent
+RentalService --> ReturnCheckHandler
+RentalService --> Rental
+ReportService --> BaseReport
+@enduml

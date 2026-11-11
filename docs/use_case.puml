@@ -1,0 +1,44 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Гість" as Guest
+actor "Клієнт" as Client
+actor "Адміністратор" as Admin
+
+Client --|> Guest
+
+rectangle "Система прокату автомобілів" {
+  usecase "Переглянути каталог авто" as UC1
+  usecase "Зареєструватися" as UC2
+  usecase "Увійти в систему" as UC3
+  usecase "Оформити оренду" as UC4
+  usecase "Розрахувати вартість" as UC5
+  usecase "Переглянути свої оренди" as UC6
+  usecase "Керувати автопарком" as UC7
+  usecase "Керувати клієнтами" as UC8
+  usecase "Видати авто" as UC9
+  usecase "Прийняти авто" as UC10
+  usecase "Перевірити стан авто" as UC11
+  usecase "Нарахувати штраф" as UC12
+  usecase "Переглянути звіт по зайнятості" as UC13
+  usecase "Переглянути фінансовий звіт" as UC14
+}
+
+Guest --> UC1
+Guest --> UC2
+Client --> UC3
+Client --> UC4
+Client --> UC6
+Admin --> UC3
+Admin --> UC7
+Admin --> UC8
+Admin --> UC9
+Admin --> UC10
+Admin --> UC13
+Admin --> UC14
+
+UC4 ..> UC5 : <<include>>
+UC10 ..> UC11 : <<include>>
+UC12 .> UC10 : <<extend>>
+@enduml

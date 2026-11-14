@@ -1,7 +1,7 @@
 from datetime import date
 from decimal import Decimal
 
-from sqlalchemy import ForeignKey, Numeric
+from sqlalchemy import ForeignKey, Numeric, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
@@ -18,9 +18,12 @@ class Rental(Base):
     expected_return_date: Mapped[date]
     actual_return_date: Mapped[date | None]
     deposit_amount: Mapped[Decimal] = mapped_column(Numeric(10, 2))
-    total_cost: Mapped[Decimal | None] = mapped_column(Numeric(10, 2))
+    total_cost: Mapped[Decimal] = mapped_column(Numeric(10, 2))
+    options: Mapped[str] = mapped_column(String(200), default="")
     status: Mapped[RentalStatus] = mapped_column(default=RentalStatus.RESERVED)
 
     client: Mapped["Client"] = relationship(back_populates="rentals")
     car: Mapped["Car"] = relationship(back_populates="rentals")
-    fines: Mapped[list["Fine"]] = relationship(back_populates="rental")
+    fines: Mapped[list["Fine"]] = relationship(
+        back_populates="rental", cascade="all, delete-orphan"
+    )

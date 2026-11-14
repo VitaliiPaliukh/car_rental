@@ -19,3 +19,9 @@ class RentalStatus(str, enum.Enum):
     OVERDUE = "overdue"
     CLOSED = "closed"
     CANCELLED = "cancelled"
+
+
+class DamageLevel(str, enum.Enum):
+    NONE = "none"
+    MINOR = "minor"
+    MAJOR = "major"

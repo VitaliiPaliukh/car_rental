@@ -4,7 +4,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
 from app import models  # noqa: F401  (реєструє моделі в Base.metadata)
-from app.api import cars
+from app.api import cars, clients
 from app.core.config import get_settings
 from app.core.database import Base, engine
 from app.core.exceptions import BusinessRuleError, ConflictError, NotFoundError
@@ -21,6 +21,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title=settings.app_name, lifespan=lifespan)
 
 app.include_router(cars.router)
+app.include_router(clients.router)
 
 
 @app.exception_handler(NotFoundError)

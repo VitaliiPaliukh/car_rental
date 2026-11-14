@@ -11,7 +11,7 @@ class CarCreate(BaseModel):
     type: CarType
     year: int = Field(ge=1990, le=2100)
     price_per_day: Decimal = Field(gt=0)
-    deposit: Decimal = Field(ge=0)
+    deposit: Decimal | None = Field(default=None, ge=0)
 
 
 class CarUpdate(BaseModel):
@@ -24,8 +24,14 @@ class CarUpdate(BaseModel):
     status: CarStatus | None = None
 
 
-class CarRead(CarCreate):
+class CarRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
+    brand: str
+    model: str
+    type: CarType
+    year: int
+    price_per_day: Decimal
+    deposit: Decimal
     status: CarStatus

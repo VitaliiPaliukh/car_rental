@@ -2,17 +2,19 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.models.car import Car
-from app.models.enums import CarStatus
+from app.models.enums import CarStatus, CarType
 
 
 class CarRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    def list(self, status: CarStatus | None = None) -> list[Car]:
-        stmt = select(Car)
+    def get_all(self, status: CarStatus | None = None, car_type: CarType | None = None) -> list[Car]:
+        stmt = select(Car).order_by(Car.id)
         if status:
             stmt = stmt.where(Car.status == status)
+        if car_type:
+            stmt = stmt.where(Car.type == car_type)
         return list(self.db.scalars(stmt))
 
     def get(self, car_id: int) -> Car | None:

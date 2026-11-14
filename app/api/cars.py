@@ -1,22 +1,27 @@
-from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
+from datetime import date
 
-from app.core.database import get_db
-from app.models.enums import CarStatus
-from app.repositories.car_repository import CarRepository
+from fastapi import APIRouter, Depends
+
+from app.api.deps import get_car_service
+from app.models.enums import CarStatus, CarType
 from app.schemas.car import CarCreate, CarRead, CarUpdate
 from app.services.car_service import CarService
 
 router = APIRouter(prefix="/api/cars", tags=["cars"])
 
 
-def get_car_service(db: Session = Depends(get_db)) -> CarService:
-    return CarService(CarRepository(db))
-
-
 @router.get("", response_model=list[CarRead])
-def list_cars(status: CarStatus | None = None, service: CarService = Depends(get_car_service)):
-    return service.list_cars(status)
+def list_cars(
+    status: CarStatus | None = None,
+    type: CarType | None = None,
+    service: CarService = Depends(get_car_service),
+):
+    return service.list_cars(status, type)
+
+
+@router.get("/available", response_model=list[CarRead])
+def available_cars(start: date, end: date, service: CarService = Depends(get_car_service)):
+    return service.available_cars(start, end)
 
 
 @router.get("/{car_id}", response_model=CarRead)

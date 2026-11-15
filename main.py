@@ -1,28 +1,19 @@
-from contextlib import asynccontextmanager
-
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
-from app import models
-from app.api import cars, clients, rentals
+from app import models  # noqa: F401  (реєструє моделі в Base.metadata)
+from app.api import cars, clients, rentals, reports
 from app.core.config import get_settings
-from app.core.database import Base, engine
 from app.core.exceptions import BusinessRuleError, ConflictError, NotFoundError
 
 settings = get_settings()
 
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    Base.metadata.create_all(bind=engine)
-    yield
-
-
-app = FastAPI(title=settings.app_name, lifespan=lifespan)
+app = FastAPI(title=settings.app_name)
 
 app.include_router(cars.router)
 app.include_router(clients.router)
 app.include_router(rentals.router)
+app.include_router(reports.router)
 
 
 @app.exception_handler(NotFoundError)

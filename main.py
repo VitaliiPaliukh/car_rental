@@ -1,15 +1,22 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
-from app import models  # noqa: F401  (реєструє моделі в Base.metadata)
-from app.api import cars, clients, rentals, reports
+from app import models
+from app.api import auth, cars, clients, rentals, reports
 from app.core.config import get_settings
-from app.core.exceptions import BusinessRuleError, ConflictError, NotFoundError
+from app.core.exceptions import (
+    BusinessRuleError,
+    ConflictError,
+    ForbiddenError,
+    NotFoundError,
+    UnauthorizedError,
+)
 
 settings = get_settings()
 
 app = FastAPI(title=settings.app_name)
 
+app.include_router(auth.router)
 app.include_router(cars.router)
 app.include_router(clients.router)
 app.include_router(rentals.router)
@@ -29,6 +36,18 @@ async def business_rule_handler(request: Request, exc: BusinessRuleError):
 @app.exception_handler(ConflictError)
 async def conflict_handler(request: Request, exc: ConflictError):
     return JSONResponse(status_code=409, content={"detail": str(exc)})
+
+
+@app.exception_handler(UnauthorizedError)
+async def unauthorized_handler(request: Request, exc: UnauthorizedError):
+    return JSONResponse(
+        status_code=401, content={"detail": str(exc)}, headers={"WWW-Authenticate": "Bearer"}
+    )
+
+
+@app.exception_handler(ForbiddenError)
+async def forbidden_handler(request: Request, exc: ForbiddenError):
+    return JSONResponse(status_code=403, content={"detail": str(exc)})
 
 
 @app.get("/api/health")

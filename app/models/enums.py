@@ -25,3 +25,8 @@ class DamageLevel(str, enum.Enum):
     NONE = "none"
     MINOR = "minor"
     MAJOR = "major"
+
+
+class UserRole(str, enum.Enum):
+    ADMIN = "admin"
+    CLIENT = "client"

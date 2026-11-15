@@ -12,3 +12,11 @@ class ConflictError(Exception):
 
 class InvalidStateError(ConflictError):
     """Дія недопустима в поточному стані оренди -> HTTP 409."""
+
+
+class UnauthorizedError(Exception):
+    """Немає або невалідний токен / невірні облікові дані -> HTTP 401."""
+
+
+class ForbiddenError(Exception):
+    """Недостатньо прав -> HTTP 403."""

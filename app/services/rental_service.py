@@ -59,10 +59,10 @@ class RentalService:
     def extra_options() -> dict[str, Decimal]:
         return EXTRA_OPTIONS
 
-    def create_rental(self, data: RentalCreate) -> Rental:
-        client = self.clients.get(data.client_id)
+    def create_rental(self, data: RentalCreate, client_id: int) -> Rental:
+        client = self.clients.get(client_id)
         if client is None:
-            raise NotFoundError(f"Client {data.client_id} not found")
+            raise NotFoundError(f"Client {client_id} not found")
         car = self.cars.get(data.car_id)
         if car is None:
             raise NotFoundError(f"Car {data.car_id} not found")

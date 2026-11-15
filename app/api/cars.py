@@ -2,7 +2,7 @@ from datetime import date
 
 from fastapi import APIRouter, Depends
 
-from app.api.deps import get_car_service
+from app.api.deps import get_car_service, require_admin
 from app.models.enums import CarStatus, CarType
 from app.schemas.car import CarCreate, CarRead, CarUpdate
 from app.services.car_service import CarService
@@ -29,16 +29,16 @@ def get_car(car_id: int, service: CarService = Depends(get_car_service)):
     return service.get_car(car_id)
 
 
-@router.post("", response_model=CarRead, status_code=201)
+@router.post("", response_model=CarRead, status_code=201, dependencies=[Depends(require_admin)])
 def create_car(data: CarCreate, service: CarService = Depends(get_car_service)):
     return service.create_car(data)
 
 
-@router.patch("/{car_id}", response_model=CarRead)
+@router.patch("/{car_id}", response_model=CarRead, dependencies=[Depends(require_admin)])
 def update_car(car_id: int, data: CarUpdate, service: CarService = Depends(get_car_service)):
     return service.update_car(car_id, data)
 
 
-@router.delete("/{car_id}", status_code=204)
+@router.delete("/{car_id}", status_code=204, dependencies=[Depends(require_admin)])
 def delete_car(car_id: int, service: CarService = Depends(get_car_service)):
     service.delete_car(car_id)

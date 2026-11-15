@@ -18,7 +18,7 @@ class _Period(BaseModel):
 
 
 class RentalCreate(_Period):
-    client_id: int
+    client_id: int | None = None
     car_id: int
     options: list[str] = []
 

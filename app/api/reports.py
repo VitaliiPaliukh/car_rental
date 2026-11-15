@@ -2,10 +2,10 @@ from datetime import date
 
 from fastapi import APIRouter, Depends
 
-from app.api.deps import get_report_service
+from app.api.deps import get_report_service, require_admin
 from app.services.report_service import ReportService
 
-router = APIRouter(prefix="/api/reports", tags=["reports"])
+router = APIRouter(prefix="/api/reports", tags=["reports"], dependencies=[Depends(require_admin)])
 
 
 @router.get("/availability")

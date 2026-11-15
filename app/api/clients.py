@@ -1,11 +1,10 @@
 from fastapi import APIRouter, Depends
 
-from app.api.deps import get_client_service
+from app.api.deps import get_client_service, require_admin
 from app.schemas.client import ClientCreate, ClientRead, ClientUpdate
 from app.services.client_service import ClientService
 
-router = APIRouter(prefix="/api/clients", tags=["clients"])
-
+router = APIRouter(prefix="/api/clients", tags=["clients"], dependencies=[Depends(require_admin)])
 
 @router.get("", response_model=list[ClientRead])
 def list_clients(search: str | None = None, service: ClientService = Depends(get_client_service)):

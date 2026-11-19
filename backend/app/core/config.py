@@ -1,15 +1,18 @@
 from functools import lru_cache
+from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+BASE_DIR = Path(__file__).resolve().parents[2]
 
 
 class Settings(BaseSettings):
     app_name: str = "Car Rental"
-    database_url: str = "sqlite:///./rental.db"
+    database_url: str = f"sqlite:///{(BASE_DIR / 'rental.db').as_posix()}"
     secret_key: str = "dev-secret-change-me-in-env-file-0000"
     access_token_expire_minutes: int = 480
 
-    model_config = SettingsConfigDict(env_file=".env")
+    model_config = SettingsConfigDict(env_file=BASE_DIR / ".env")
 
 
 @lru_cache

@@ -5,7 +5,6 @@ from decimal import ROUND_HALF_UP, Decimal
 from app.core.exceptions import BusinessRuleError
 from app.models.car import Car
 
-
 def money(value: Decimal) -> Decimal:
     return Decimal(value).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
 

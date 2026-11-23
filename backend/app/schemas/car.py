@@ -1,6 +1,6 @@
 from decimal import Decimal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, computed_field
 
 from app.models.enums import CarStatus, CarType
 
@@ -35,3 +35,9 @@ class CarRead(BaseModel):
     price_per_day: Decimal
     deposit: Decimal
     status: CarStatus
+    photo: str | None = Field(default=None, exclude=True)  # у відповідь не потрапляє
+
+    @computed_field
+    @property
+    def photo_url(self) -> str | None:
+        return f"/uploads/cars/{self.photo}" if self.photo else None

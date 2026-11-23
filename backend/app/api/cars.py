@@ -1,6 +1,6 @@
 from datetime import date
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, File, UploadFile
 
 from app.api.deps import get_car_service, require_admin
 from app.models.enums import CarStatus, CarType
@@ -42,3 +42,15 @@ def update_car(car_id: int, data: CarUpdate, service: CarService = Depends(get_c
 @router.delete("/{car_id}", status_code=204, dependencies=[Depends(require_admin)])
 def delete_car(car_id: int, service: CarService = Depends(get_car_service)):
     service.delete_car(car_id)
+
+
+@router.post("/{car_id}/photo", response_model=CarRead, dependencies=[Depends(require_admin)])
+def upload_photo(
+    car_id: int, file: UploadFile = File(...), service: CarService = Depends(get_car_service)
+):
+    return service.set_photo(car_id, file.file)
+
+
+@router.delete("/{car_id}/photo", response_model=CarRead, dependencies=[Depends(require_admin)])
+def delete_photo(car_id: int, service: CarService = Depends(get_car_service)):
+    return service.remove_photo(car_id)

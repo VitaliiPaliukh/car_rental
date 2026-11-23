@@ -18,5 +18,5 @@ class Car(Base):
     price_per_day: Mapped[Decimal] = mapped_column(Numeric(10, 2))
     deposit: Mapped[Decimal] = mapped_column(Numeric(10, 2))
     status: Mapped[CarStatus] = mapped_column(default=CarStatus.AVAILABLE)
-
+    photo: Mapped[str | None] = mapped_column(String(100))
     rentals: Mapped[list["Rental"]] = relationship(back_populates="car")

@@ -11,6 +11,8 @@ class Settings(BaseSettings):
     database_url: str = f"sqlite:///{(BASE_DIR / 'rental.db').as_posix()}"
     secret_key: str = "dev-secret-change-me-in-env-file-0000"
     access_token_expire_minutes: int = 480
+    upload_dir: str = str(BASE_DIR / "uploads")
+    max_photo_bytes: int = 5 * 1024 * 1024
 
     model_config = SettingsConfigDict(env_file=BASE_DIR / ".env")
 

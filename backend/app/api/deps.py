@@ -2,6 +2,7 @@ from fastapi import Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
 
+from app.services.photo_storage import PhotoStorage
 from app.core.database import get_db
 from app.core.exceptions import ForbiddenError, UnauthorizedError
 from app.models.enums import UserRole
@@ -20,8 +21,7 @@ _bearer = HTTPBearer(auto_error=False)
 
 
 def get_car_service(db: Session = Depends(get_db)) -> CarService:
-    return CarService(CarRepository(db), RentalRepository(db))
-
+    return CarService(CarRepository(db), RentalRepository(db), PhotoStorage())
 
 def get_client_service(db: Session = Depends(get_db)) -> ClientService:
     return ClientService(ClientRepository(db))

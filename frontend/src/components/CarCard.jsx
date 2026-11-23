@@ -1,10 +1,12 @@
 import { Link } from 'react-router-dom'
 import { CAR_TYPES, formatMoney } from '../utils'
+import CarPhoto from './CarPhoto'
 import StatusBadge from './StatusBadge'
 
 export default function CarCard({ car, search = '' }) {
     return (
         <div className="card car-card">
+            <CarPhoto car={car} />
             <div className="car-card-top">
                 <span className="car-type">{CAR_TYPES[car.type] || car.type}</span>
                 <StatusBadge status={car.status} />

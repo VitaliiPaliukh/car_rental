@@ -1,6 +1,8 @@
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
 const TOKEN_KEY = 'rental_token'
 
+export const assetUrl = (path) => (path ? BASE_URL + path : null)
+
 export const getToken = () => localStorage.getItem(TOKEN_KEY)
 
 export function setToken(token) {
@@ -38,7 +40,8 @@ export async function request(path, { method = 'GET', body, params } = {}) {
     })
 
     const headers = {}
-    if (body !== undefined) headers['Content-Type'] = 'application/json'
+    const isForm = typeof FormData !== 'undefined' && body instanceof FormData
+    if (body !== undefined && !isForm) headers['Content-Type'] = 'application/json'
     const token = getToken()
     if (token) headers.Authorization = `Bearer ${token}`
 
@@ -47,7 +50,7 @@ export async function request(path, { method = 'GET', body, params } = {}) {
         response = await fetch(url, {
             method,
             headers,
-            body: body !== undefined ? JSON.stringify(body) : undefined,
+            body: body === undefined ? undefined : isForm ? body : JSON.stringify(body),
         })
     } catch {
         throw new ApiError(0, 'Не вдалося зʼєднатися із сервером. Перевірте, чи запущений бекенд.')

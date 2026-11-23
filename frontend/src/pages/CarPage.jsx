@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import * as carsApi from '../api/cars'
 import * as rentalsApi from '../api/rentals'
+import CarPhoto from '../components/CarPhoto'
 import ErrorMessage from '../components/ErrorMessage'
 import StatusBadge from '../components/StatusBadge'
 import useAuth from '../context/useAuth'
@@ -63,6 +64,7 @@ export default function CarPage() {
             </p>
             <div className="two-cols">
                 <div className="card">
+                    <CarPhoto car={car} className="car-photo-large" />
                     <div className="car-card-top">
                         <span className="car-type">{CAR_TYPES[car.type] || car.type}</span>
                         <StatusBadge status={car.status} />
